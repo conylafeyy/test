@@ -1,7 +1,7 @@
 import com.github.javafaker.Faker;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import utils.DataGenerator;
 
 import java.util.Locale;
 
@@ -10,7 +10,6 @@ import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
 
 class AuthTest {
-    Faker faker = new Faker(new Locale("ru"));
 
     @BeforeEach
     void setUp() {
@@ -21,7 +20,7 @@ class AuthTest {
     @Test
     void shouldOk() {
         var user = DataGenerator.Registration.person("ru","active");
-        DataGenerator.setUpAll(user);
+        DataGenerator.sendRequest(user);
         $("[data-test-id='login'] input").setValue(user.getLogin());
         $("[data-test-id='password'] input").setValue(user.getPassword());
         $("[data-test-id='action-login']").click();
@@ -31,7 +30,7 @@ class AuthTest {
     @Test
     void shouldBlocked() {
         var user = DataGenerator.Registration.person("ru","blocked");
-        DataGenerator.setUpAll(user);
+        DataGenerator.sendRequest(user);
         $("[data-test-id='login'] input").setValue(user.getLogin());
         $("[data-test-id='password'] input").setValue(user.getPassword());
         $("[data-test-id='action-login']").click();
@@ -41,9 +40,10 @@ class AuthTest {
     @Test
     void shouldInvalidLogin() {
         var user = DataGenerator.Registration.person("ru","active");
-        DataGenerator.setUpAll(user);
+        var fakeUser = DataGenerator.Registration.person("ru","active");
+        DataGenerator.sendRequest(user);
         $("[data-test-id='login'] input").setValue(user.getLogin());
-        $("[data-test-id='password'] input").setValue(faker.internet().password());
+        $("[data-test-id='password'] input").setValue(fakeUser.getPassword());
         $("[data-test-id='action-login']").click();
         $("[data-test-id=error-notification]").shouldHave(text("Неверно указан логин или пароль"));
     }
@@ -51,8 +51,9 @@ class AuthTest {
     @Test
     void shouldInvalidPassword() {
         var user = DataGenerator.Registration.person("ru","active");
-        DataGenerator.setUpAll(user);
-        $("[data-test-id='login'] input").setValue(faker.name().username());
+        var fakeUser = DataGenerator.Registration.person("ru","active");
+        DataGenerator.sendRequest(user);
+        $("[data-test-id='login'] input").setValue(fakeUser.getLogin());
         $("[data-test-id='password'] input").setValue(user.getPassword());
         $("[data-test-id='action-login']").click();
         $("[data-test-id=error-notification]").shouldHave(text("Неверно указан логин или пароль"));
@@ -60,8 +61,9 @@ class AuthTest {
 
     @Test
     void shouldNotExist() {
-        $("[data-test-id='login'] input").setValue(faker.name().username());
-        $("[data-test-id='password'] input").setValue(faker.internet().password());
+        var fakeUser = DataGenerator.Registration.person("ru","active");
+        $("[data-test-id='login'] input").setValue(fakeUser.getLogin());
+        $("[data-test-id='password'] input").setValue(fakeUser.getPassword());
         $("[data-test-id='action-login']").click();
         $("[data-test-id=error-notification]").shouldHave(text("Неверно указан логин или пароль"));
     }
@@ -69,9 +71,10 @@ class AuthTest {
     @Test
     void shouldInvalidLoginAndBlocked() {
         var user = DataGenerator.Registration.person("ru","blocked");
-        DataGenerator.setUpAll(user);
+        var fakeUser = DataGenerator.Registration.person("ru","blocked");
+        DataGenerator.sendRequest(user);
         $("[data-test-id='login'] input").setValue(user.getLogin());
-        $("[data-test-id='password'] input").setValue(faker.internet().password());
+        $("[data-test-id='password'] input").setValue(fakeUser.getPassword());
         $("[data-test-id='action-login']").click();
         $("[data-test-id=error-notification]").shouldHave(text("Неверно указан логин или пароль"));
     }
@@ -79,8 +82,9 @@ class AuthTest {
     @Test
     void shouldInvalidPasswordAndBlocked() {
         var user = DataGenerator.Registration.person("ru","blocked");
-        DataGenerator.setUpAll(user);
-        $("[data-test-id='login'] input").setValue(faker.name().username());
+        var fakeUser = DataGenerator.Registration.person("ru","blocked");
+        DataGenerator.sendRequest(user);
+        $("[data-test-id='login'] input").setValue(fakeUser.getLogin());
         $("[data-test-id='password'] input").setValue(user.getPassword());
         $("[data-test-id='action-login']").click();
         $("[data-test-id=error-notification]").shouldHave(text("Неверно указан логин или пароль"));

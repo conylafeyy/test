@@ -1,3 +1,5 @@
+package utils;
+
 import com.github.javafaker.Faker;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
@@ -33,7 +35,7 @@ public class DataGenerator {
             .log(LogDetail.ALL)
             .build();
 
-    static void setUpAll(DataPerson user) {
+    public static void sendRequest(DataPerson user) {
         given()
                 .spec(requestSpec) // указываем, какую спецификацию используем
                 .body(user)
